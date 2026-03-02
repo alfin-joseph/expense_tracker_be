@@ -136,7 +136,7 @@ SPECTACULAR_SETTINGS = {
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get("postgresql://expense_tracker_u7fe_user:palSL8vo6uDQ2Hrhu5YS6UVCm5OhYwsj@dpg-d6ipqrkr85hc73a7ose0-a/expense_tracker_u7fe")
+        default=os.environ.get("DATABASE_URL")
     )
 }
 
