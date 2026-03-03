@@ -5,6 +5,8 @@ from .models import AIInsight
 from django.conf import settings
 import json
 import re
+from django.utils import timezone
+from datetime import timedelta
 
 def extract_json(text):
     # Remove markdown code blocks if present
@@ -109,14 +111,15 @@ def call_groq_api(prompt):
     return response.json()["choices"][0]["message"]["content"]
 
 
-def generate_ai_insight(user, month, year):
+def generate_ai_insight(user , month, year):
 
-    # Check cache first
+    thirty_minutes_ago = timezone.now() - timedelta(minutes=30)
+
+    # Check if insight exists within last 30 minutes
     existing = AIInsight.objects.filter(
         user=user,
-        month=month,
-        year=year
-    ).first()
+        created_at__gte=thirty_minutes_ago
+    ).order_by('-created_at').first()
 
     if existing:
         return existing
@@ -126,13 +129,10 @@ def generate_ai_insight(user, month, year):
     prompt = build_prompt(financial_data)
 
     ai_raw_response = call_groq_api(prompt)
-    print("AI RAW RESPONSE:")
-    print(ai_raw_response)
 
-    # ai_data = extract_json(ai_raw_response)
     try:
         ai_data = extract_json(ai_raw_response)
-    except Exception as e:
+    except Exception:
         return {
             "summary": "AI summary generation failed. Please try again.",
             "risk_level": "Unknown",
@@ -142,8 +142,6 @@ def generate_ai_insight(user, month, year):
 
     insight = AIInsight.objects.create(
         user=user,
-        month=month,
-        year=year,
         summary=ai_data["summary"],
         risk_level=ai_data["risk_level"],
         recommendations=ai_data["recommendations"],

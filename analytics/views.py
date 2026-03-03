@@ -40,7 +40,7 @@ class AnalyticsOverviewView(APIView):
 
         # Average monthly (based on all time)
         avg_income = (
-            Transaction.objects.filter(user=user, type="income")
+            Transaction.objects.filter(user=user, type="income" ,is_deleted=False)
             .values("transaction_date__year", "transaction_date__month")
             .annotate(monthly_total=Sum("amount"))
             .aggregate(avg=Avg("monthly_total"))["avg"]
@@ -48,7 +48,7 @@ class AnalyticsOverviewView(APIView):
         )
 
         avg_expense = (
-            Transaction.objects.filter(user=user, type="expense")
+            Transaction.objects.filter(user=user, type="expense",is_deleted=False)
             .values("transaction_date__year", "transaction_date__month")
             .annotate(monthly_total=Sum("amount"))
             .aggregate(avg=Avg("monthly_total"))["avg"]
