@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+from decouple import config
 from pathlib import Path
 from datetime import timedelta
 import dj_database_url
@@ -28,7 +29,7 @@ SECRET_KEY = 'django-insecure-&07g20-$9wd_@)$#hp3p84_4eg6*!rq7zydv+s%ock12pwf=zo
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.onrender.com']
+ALLOWED_HOSTS = ['.onrender.com' , 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
     "transactions",
     "budgets",
     "insights",
+    "analytics",
     "django_filters",
     "drf_spectacular",
 
@@ -161,7 +163,8 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
+GROQ_API_KEY = config("GROQ_API_KEY")
+os.environ["GROQ_API_KEY"] = config("GROQ_API_KEY")
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
