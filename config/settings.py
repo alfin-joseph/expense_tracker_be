@@ -163,8 +163,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-GROQ_API_KEY = config("GROQ_API_KEY")
-os.environ["GROQ_API_KEY"] = config("GROQ_API_KEY")
+GROQ_API_KEY = config("GROQ_API_KEY", default=None)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
