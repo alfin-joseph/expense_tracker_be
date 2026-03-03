@@ -4,9 +4,9 @@ from rest_framework.response import Response
 from django.db.models import Sum, Avg
 from django.db.models.functions import ExtractMonth
 from transactions.models import Transaction
+from .services import generate_ai_insight
 from datetime import datetime
-
-
+ 
 class AnalyticsOverviewView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -16,6 +16,7 @@ class AnalyticsOverviewView(APIView):
         period = request.query_params.get("period", "monthly")
         month = request.query_params.get("month")
         year = request.query_params.get("year")
+  
 
         queryset = Transaction.objects.filter(
             user=user,
@@ -81,4 +82,35 @@ class AnalyticsOverviewView(APIView):
             },
             "trend": trend_data,
             "category_distribution": category_distribution,
+        })
+        
+
+class AISummaryView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        month = request.query_params.get("month")
+        year = request.query_params.get("year")
+        
+        now = datetime.now()
+
+        month = int(month) if month else now.month
+        year = int(year) if year else now.year
+
+        if not month or not year:
+            return Response({"error": "Month and year required"}, status=400)
+
+        insight = generate_ai_insight(
+            request.user,
+            int(month),
+            int(year)
+        )
+
+        return Response({
+            "month": insight.month,
+            "year": insight.year,
+            "summary": insight.summary,
+            "risk_level": insight.risk_level,
+            "recommendations": insight.recommendations,
+            "potential_savings": insight.potential_savings,
         })
