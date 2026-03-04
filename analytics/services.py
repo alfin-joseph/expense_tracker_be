@@ -142,6 +142,8 @@ def generate_ai_insight(user , month, year):
 
     insight = AIInsight.objects.create(
         user=user,
+        month=month,
+        year=year,
         summary=ai_data["summary"],
         risk_level=ai_data["risk_level"],
         recommendations=ai_data["recommendations"],

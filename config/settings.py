@@ -85,6 +85,7 @@ TEMPLATES = [
 
 CORS_ALLOWED_ORIGINS = [
     "https://expense-tracker-fe-teal-theta.vercel.app",
+    "http://localhost:3000",
 ]
 
 REST_FRAMEWORK = {
